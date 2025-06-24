@@ -27,7 +27,7 @@ filesure-adt1-assignment/
 ├── requirements.txt
 ├── README.md
 │
-└── .env                           # Your OpenAI API key (not shared)
+└── .env                           # My OpenAI API key (not shared)
 ```
 
 
