@@ -77,7 +77,7 @@ filesure-adt1-assignment/
 
 ## 🛠 How to Run the Project
 
-## 1. 🧰 OCR Setup (Tesseract Installation Required)
+## Step 1: 🧰 OCR Setup (Tesseract Installation Required)
 
 This project relies on **Tesseract OCR** to extract text from scanned PDF documents using Optical Character Recognition (OCR). You **must install** Tesseract and ensure it's available via your system’s environment variable (`PATH`) before running the pipeline.
 
