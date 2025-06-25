@@ -1,0 +1,32 @@
+stages:
+  extract_attachments:
+    cmd: python src/attachment_parser.py
+    deps:
+      - src/attachment_parser.py
+      - data/raw/Form ADT-1-29092023_signed.pdf
+    outs:
+      - data/attachments/
+
+  extract_main_data:
+    cmd: python src/extractor.py
+    deps:
+      - src/extractor.py
+      - data/raw/Form ADT-1-29092023_signed.pdf
+    outs:
+      - data/processed/output.json
+
+  summary_main_data:
+    cmd: python src/summary_generator.py
+    deps:
+      - src/summary_generator.py
+      - data/processed/output.json
+    outs:
+      - reports/summary.txt
+
+  summary_attachments:
+    cmd: python src/attachment_files_summary.py
+    deps:
+      - src/attachment_files_summary.py
+      - data/attachments/
+    outs:
+      - reports/attachment_file_summary.md

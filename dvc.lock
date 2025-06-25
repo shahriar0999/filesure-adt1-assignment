@@ -1,0 +1,68 @@
+schema: '2.0'
+stages:
+  extract_attachments:
+    cmd: python src/attachment_parser.py
+    deps:
+    - path: data/raw/Form ADT-1-29092023_signed.pdf
+      hash: md5
+      md5: 1e562e319bbace5b19b9d56f700b07f3
+      size: 1941293
+    - path: src/attachment_parser.py
+      hash: md5
+      md5: a316483227b0b84c4eeab904e6a0c4ee
+      size: 2798
+    outs:
+    - path: data/attachments/
+      hash: md5
+      md5: 6a9f07a546ca1e99b031a254a391a762.dir
+      size: 1540809
+      nfiles: 4
+  extract_main_data:
+    cmd: python src/extractor.py
+    deps:
+    - path: data/raw/Form ADT-1-29092023_signed.pdf
+      hash: md5
+      md5: 1e562e319bbace5b19b9d56f700b07f3
+      size: 1941293
+    - path: src/extractor.py
+      hash: md5
+      md5: b189d437e2a054476116fbb4dfaf3220
+      size: 3265
+    outs:
+    - path: data/processed/output.json
+      hash: md5
+      md5: a9cdb7610a4d045cab3b85869a5cbc6e
+      size: 740
+  summary_main_data:
+    cmd: python src/summary_generator.py
+    deps:
+    - path: data/processed/output.json
+      hash: md5
+      md5: a9cdb7610a4d045cab3b85869a5cbc6e
+      size: 740
+    - path: src/summary_generator.py
+      hash: md5
+      md5: 2c5f4f85de7f9cf9019a3bd8652659e7
+      size: 3834
+    outs:
+    - path: reports/summary.txt
+      hash: md5
+      md5: 29121bac37dc9e7b60786e997d3a7f74
+      size: 438
+  summary_attachments:
+    cmd: python src/attachment_files_summary.py
+    deps:
+    - path: data/attachments/
+      hash: md5
+      md5: 6a9f07a546ca1e99b031a254a391a762.dir
+      size: 1540809
+      nfiles: 4
+    - path: src/attachment_files_summary.py
+      hash: md5
+      md5: 0a1a654d5ab2fc1221b80c1e8a2ba83d
+      size: 4117
+    outs:
+    - path: reports/attachment_file_summary.md
+      hash: md5
+      md5: 6d8a7d35b3bcc2c4c0d00d366180127e
+      size: 5610

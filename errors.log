@@ -1,0 +1,4 @@
+2025-06-23 16:14:26,641 - AttachmentParser - ERROR - Error loading PDF file ./data/raw/Form ADT-1-29092023_signed.pdf: module 'fitz' has no attribute 'open'
+2025-06-23 16:25:10,536 - AttachmentParser - ERROR - Error retrieving metadata for attachment 4: 'utf-8' codec can't encode characters in position 14-15: surrogates not allowed
+2025-06-25 09:14:37,859 - AttachmentParser - ERROR - Error retrieving metadata for attachment 4: 'utf-8' codec can't encode characters in position 14-15: surrogates not allowed
+2025-06-25 09:16:32,280 - AttachmentParser - ERROR - Error retrieving metadata for attachment 4: 'utf-8' codec can't encode characters in position 14-15: surrogates not allowed
