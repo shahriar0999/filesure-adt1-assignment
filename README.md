@@ -77,21 +77,89 @@ filesure-adt1-assignment/
 
 ## 🛠 How to Run the Project
 
-### Step 1: Set Up Environment
+## 1. 🧰 OCR Setup (Tesseract Installation Required)
+
+This project relies on **Tesseract OCR** to extract text from scanned PDF documents using Optical Character Recognition (OCR). You **must install** Tesseract and ensure it's available via your system’s environment variable (`PATH`) before running the pipeline.
+
+---
+
+### ✅ Step-by-Step Setup (Windows)
+
+#### 1. Download and Install Tesseract
+
+- Go to the following link and download the latest `.exe` installer for Windows:  
+  👉 https://github.com/UB-Mannheim/tesseract/wiki
+
+- Run the installer and follow the default installation steps.
+
+> 📍 By default, Tesseract installs to:  
+> `C:\Program Files\Tesseract-OCR`
+
+---
+
+#### 2. Add Tesseract to System PATH (Using PowerShell)
+
+To make `tesseract` accessible from anywhere, you need to add it to your system’s environment variable (`PATH`).
+
+Open **PowerShell as Administrator** and run the following command:
+
+```powershell
+[Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Tesseract-OCR", [EnvironmentVariableTarget]::Machine)
+```
+
+> ⚠️ Replace the path if you installed Tesseract in a different location.
+
+---
+
+#### 3. Restart Your Terminal
+
+To apply the changes, **close and reopen** your terminal (PowerShell, CMD, or VS Code).
+
+---
+
+#### 4. Verify Installation
+
+Run this command to ensure Tesseract was correctly installed and added to your `PATH`:
+
+```powershell
+tesseract --version
+```
+
+You should see output similar to:
+
+```
+tesseract v5.x.x
+leptonica-1.8x.x
+```
+
+If the version prints successfully, you're all set!
+
+---
+
+### 📝 Notes
+
+- Tesseract is required by `extractor.py` and `attachment_files_summary.py` to perform OCR-based text extraction from PDF pages.
+- This step only needs to be done once per machine setup.
+- If you're using a virtual environment, no need to add Tesseract there—it’s a system-level binary.
+
+---
+
+
+### Step 2: Set Up Environment
 Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Step 2: Add Your OpenAI API Key
+### Step 3: Add Your OpenAI API Key
 Create a `.env` file in the root directory:
 
 ```bash
 OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-### Step 3: Run the Full Pipeline with DVC
+### Step 4: Run the Full Pipeline with DVC
 
 ```bash
 dvc repro
