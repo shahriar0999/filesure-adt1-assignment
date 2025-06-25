@@ -1,32 +1,70 @@
-# imports
+# ----------------------------
+# Imports
+# ----------------------------
 import os
-import requests
+import json
+import logging
 from dotenv import load_dotenv
 from openai import OpenAI
-import json
 
-# Load environment variables in a file called .env
+# ----------------------------
+# Logging Configuration
+# ----------------------------
+logger = logging.getLogger("AuditorSummaryGenerator")
+logger.setLevel(logging.INFO)
 
+# Console handler
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+
+# File handler
+file_handler = logging.FileHandler('errors.log')
+file_handler.setLevel(logging.ERROR)
+
+# Formatter
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+console_handler.setFormatter(formatter)
+file_handler.setFormatter(formatter)
+
+# Add handlers to logger
+logger.addHandler(console_handler)
+logger.addHandler(file_handler)
+
+# ----------------------------
+# Load API Key
+# ----------------------------
 load_dotenv(override=True)
 api_key = os.getenv('OPENAI_API_KEY')
 
 if not api_key:
-    print("No API key was found - please head over to the troubleshooting notebook in this folder to identify & fix!")
+    logger.error("No API key found. Please add it to your .env file.")
 elif not api_key.startswith("sk-proj-"):
-    print("An API key was found, but it doesn't start sk-proj-; please check you're using the right key - see troubleshooting notebook")
+    logger.warning("API key may be incorrect — it should start with 'sk-proj-'")
 elif api_key.strip() != api_key:
-    print("An API key was found, but it looks like it might have space or tab characters at the start or end - please remove them - see troubleshooting notebook")
+    logger.warning("API key appears to have extra whitespace. Please fix in .env file.")
 else:
-    print("API key found and looks good so far!")
+    logger.info("API key loaded successfully.")
 
 openai = OpenAI()
 
-def user_prompt_for(path):
-    # load the data from the JSON file
-    with open(path, 'r') as file:
-        data = json.load(file)
-    
-    user_prompt = f"""\
+# ----------------------------
+# Prompts
+# ----------------------------
+system_prompt = """You are generating a formal and informative summary based on company filings disclosed via Form ADT-1. 
+Your task is to write a 5–7 line summary of the auditor appointment in a clear, concise, and professional tone, suitable for business reporting or compliance documentation.
+
+Use natural language similar to official press releases or statutory disclosures. Include key details such as the company name, auditor name, appointment period, form submission, and contact information.
+"""
+
+def user_prompt_for(path: str) -> str:
+    try:
+        with open(path, 'r') as file:
+            data = json.load(file)
+    except Exception as e:
+        logger.error(f"Failed to load JSON from {path}: {e}")
+        return ""
+
+    user_prompt = f"""
 You are reviewing a statutory disclosure submitted via Form ADT-1.
 
 The following information was extracted from the document:
@@ -51,49 +89,46 @@ Period of Appointment: From {data['appointment_period_from']} To {data['appointm
 Task:
 Write a short, professional summary in plain text describing this auditor appointment.
 The summary should resemble the tone of a legal or regulatory announcement.
-
-Example:
-“XYZ Pvt Ltd has appointed M/s Rao & Associates as its statutory auditor for FY 2023–24, effective from 1 July 2023. The appointment has been disclosed via Form ADT-1, with all supporting documents submitted.”
-
-Use the above data to generate a similar summary.
 """
     return user_prompt
 
-
-system_prompt = """ You are generating a formal and informative summary based on company filings disclosed via Form ADT-1. 
-Your task is to write a 5–7 line summary of the auditor appointment in a clear, concise, and professional tone, suitable for business reporting or compliance documentation.
-
-Use natural language similar to official press releases or statutory disclosures. Include key details such as the company name, auditor name, appointment period, form submission, and contact information.
-
-Example tone:
-“XYZ Pvt Ltd has appointed M/s Rao & Associates as its statutory auditor for FY 2023–24, effective from 1 July 2023. The appointment has been disclosed via Form ADT-1, with all supporting documents submitted.”"""
-
-
-def message(path):
+def message(path: str):
     return [
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_prompt_for(path)}
     ]
 
-
-def generate_summary(path):
+# ----------------------------
+# Generate Summary
+# ----------------------------
+def generate_summary(path: str) -> str:
     try:
         response = openai.chat.completions.create(
             model="gpt-4o",
             messages=message(path),
             max_tokens=200,
-            temperature=0.5
+            temperature=0.3
         )
-        summary = response.choices[0].message.content.strip()
-        return summary
+        return response.choices[0].message.content.strip()
     except Exception as e:
-        print(f"Error generating summary: {e}")
-        return None
+        logger.error(f"Error generating summary: {e}")
+        return ""
 
-summary = generate_summary("./data/processed/output.json")
+# ----------------------------
+# Main Execution
+# ----------------------------
+if __name__ == "__main__":
+    input_path = "./data/processed/output.json"
+    output_path = "./reports/summary.txt"
 
-# save the summary to a file
-if summary:
-    with open("./reports/summary.txt", "w") as file:
-        file.write(summary)
-    print("Summary generated and saved to summary.txt")
+    summary = generate_summary(input_path)
+
+    if summary:
+        try:
+            with open(output_path, "w", encoding="utf-8") as file:
+                file.write(summary)
+            logger.info(f"Summary successfully saved to: {output_path}")
+        except Exception as e:
+            logger.error(f"Failed to save summary: {e}")
+    else:
+        logger.warning("No summary was generated.")

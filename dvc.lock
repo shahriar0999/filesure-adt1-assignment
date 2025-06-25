@@ -26,8 +26,8 @@ stages:
       size: 1941293
     - path: src/extractor.py
       hash: md5
-      md5: b189d437e2a054476116fbb4dfaf3220
-      size: 3265
+      md5: 4792a72d3dfcb07bb3880f07bb5eea63
+      size: 5198
     outs:
     - path: data/processed/output.json
       hash: md5
@@ -42,13 +42,13 @@ stages:
       size: 740
     - path: src/summary_generator.py
       hash: md5
-      md5: 2c5f4f85de7f9cf9019a3bd8652659e7
-      size: 3834
+      md5: 0e69f2e97b4f087384b7762b974363e1
+      size: 4507
     outs:
     - path: reports/summary.txt
       hash: md5
-      md5: 29121bac37dc9e7b60786e997d3a7f74
-      size: 438
+      md5: 3bedc29ab8534c109350fa3e79eaaf43
+      size: 573
   summary_attachments:
     cmd: python src/attachment_files_summary.py
     deps:
@@ -59,10 +59,10 @@ stages:
       nfiles: 4
     - path: src/attachment_files_summary.py
       hash: md5
-      md5: 0a1a654d5ab2fc1221b80c1e8a2ba83d
-      size: 4117
+      md5: 0d18a2bd6673faad9f20f6a394809838
+      size: 5680
     outs:
     - path: reports/attachment_file_summary.md
       hash: md5
-      md5: 6d8a7d35b3bcc2c4c0d00d366180127e
-      size: 5610
+      md5: edb01059a29172f5d0f8ad2363a0a363
+      size: 5706
